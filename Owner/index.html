@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
 
     <div class="dashboard-layout">
@@ -24,7 +26,8 @@
                 <li data-target="tab-profil"><i class="fa-solid fa-user-shield"></i> Profil Saya</li>
             </ul>
             <div class="sidebar-footer">
-                <button type="button" id="btnLogout" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Keluar</button>
+                <button type="button" id="btnLogout" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i>
+                    Keluar</button>
             </div>
         </aside>
 
@@ -45,7 +48,7 @@
             </header>
 
             <div class="content-body">
-                
+
                 <!-- TAB 1: OVERVIEW / RINGKASAN -->
                 <section id="tab-overview" class="tab-content active">
                     <div class="stats-grid">
@@ -77,7 +80,8 @@
                 <section id="tab-menu" class="tab-content">
                     <div class="content-header">
                         <h2>Daftar Menu Tersedia</h2>
-                        <button type="button" class="btn-primary" onclick="alert('Buka Form Tambah Menu')"><i class="fa-solid fa-plus"></i> Tambah Menu Baru</button>
+                        <button type="button" id="btnTambahMenu" class="btn-primary"><i class="fa-solid fa-plus"></i>
+                            Tambah Menu Baru</button>
                     </div>
                     <div class="table-container">
                         <table class="data-table">
@@ -91,29 +95,7 @@
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>#M001</td>
-                                    <td><img src="https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=50" alt="Menu" class="td-img"></td>
-                                    <td>Nasi Cumi Premium</td>
-                                    <td>Rp 42.000</td>
-                                    <td><span class="badge success">Tersedia</span></td>
-                                    <td>
-                                        <button type="button" class="btn-icon edit" aria-label="Edit Data"><i class="fa-solid fa-pen-to-square"></i></button>
-                                        <button type="button" class="btn-icon delete" aria-label="Hapus Data"><i class="fa-solid fa-trash"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>#M002</td>
-                                    <td><img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=50" alt="Menu" class="td-img"></td>
-                                    <td>Nasi Cumi Super Komplit</td>
-                                    <td>Rp 55.000</td>
-                                    <td><span class="badge danger">Habis</span></td>
-                                    <td>
-                                        <button type="button" class="btn-icon edit" aria-label="Edit Data"><i class="fa-solid fa-pen-to-square"></i></button>
-                                        <button type="button" class="btn-icon delete" aria-label="Hapus Data"><i class="fa-solid fa-trash"></i></button>
-                                    </td>
-                                </tr>
+                            <tbody id="tabelMenuBody">
                             </tbody>
                         </table>
                     </div>
@@ -165,7 +147,8 @@
                 <section id="tab-karyawan" class="tab-content">
                     <div class="content-header">
                         <h2>Manajemen Karyawan</h2>
-                        <button type="button" class="btn-primary"><i class="fa-solid fa-user-plus"></i> Tambah Karyawan</button>
+                        <button type="button" class="btn-primary"><i class="fa-solid fa-user-plus"></i> Tambah
+                            Karyawan</button>
                     </div>
                     <div class="table-container">
                         <table class="data-table">
@@ -185,8 +168,10 @@
                                     <td>Manager</td>
                                     <td>089876543210</td>
                                     <td>
-                                        <button type="button" class="btn-icon edit" aria-label="Edit Data"><i class="fa-solid fa-pen-to-square"></i></button>
-                                        <button type="button" class="btn-icon delete" aria-label="Hapus Data"><i class="fa-solid fa-trash"></i></button>
+                                        <button type="button" class="btn-icon edit" aria-label="Edit Data"><i
+                                                class="fa-solid fa-pen-to-square"></i></button>
+                                        <button type="button" class="btn-icon delete" aria-label="Hapus Data"><i
+                                                class="fa-solid fa-trash"></i></button>
                                     </td>
                                 </tr>
                                 <tr>
@@ -195,8 +180,10 @@
                                     <td>Kasir</td>
                                     <td>081234567891</td>
                                     <td>
-                                        <button type="button" class="btn-icon edit" aria-label="Edit Data"><i class="fa-solid fa-pen-to-square"></i></button>
-                                        <button type="button" class="btn-icon delete" aria-label="Hapus Data"><i class="fa-solid fa-trash"></i></button>
+                                        <button type="button" class="btn-icon edit" aria-label="Edit Data"><i
+                                                class="fa-solid fa-pen-to-square"></i></button>
+                                        <button type="button" class="btn-icon delete" aria-label="Hapus Data"><i
+                                                class="fa-solid fa-trash"></i></button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -208,7 +195,8 @@
                 <section id="tab-profil" class="tab-content">
                     <div class="profile-container">
                         <div class="profile-header-card">
-                            <img src="https://ui-avatars.com/api/?name=Bapak+Kris&background=f39c12&color=fff&size=100" alt="Profile" class="profile-pic">
+                            <img src="https://ui-avatars.com/api/?name=Bapak+Kris&background=f39c12&color=fff&size=100"
+                                alt="Profile" class="profile-pic">
                             <div class="profile-info-text">
                                 <h2>Bapak Kris</h2>
                                 <p>Owner / Administrator Utama</p>
@@ -240,6 +228,65 @@
         </main>
     </div>
 
+    <div id="modalTambahMenu" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Tambah Menu Baru</h2>
+            <form id="formTambahMenu" action="#" method="POST" class="form-modal">
+                <div class="form-group">
+                    <label for="inputNamaMenu">Nama Menu</label>
+                    <input type="text" id="inputNamaMenu" required>
+                </div>
+                <div class="form-group">
+                    <label for="inputHarga">Harga (Rp)</label>
+                    <input type="number" id="inputHarga" required>
+                </div>
+                <div class="form-group">
+                    <label for="inputStatus">Status</label>
+                    <select id="inputStatus" required>
+                        <option value="Tersedia">Tersedia</option>
+                        <option value="Habis">Habis</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="inputFoto">Unggah Foto Menu</label>
+                    <input type="file" id="inputFoto" accept="image/*" required>
+                </div>
+                <button type="submit" class="btn-primary mt-3 btn-full">Simpan Menu</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalEditMenu" class="modal">
+        <div class="modal-content">
+            <span class="close-modal-edit">&times;</span>
+            <h2>Edit Menu</h2>
+            <form id="formEditMenu" class="form-modal">
+                <input type="hidden" id="editId" name="id_menu">
+                <div class="form-group">
+                    <!-- Hubungkan for dengan id input di bawahnya -->
+                    <label for="editNama">Nama Menu</label>
+                    <input type="text" id="editNama" name="nama_menu" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="editHarga">Harga (Rp)</label>
+                    <input type="number" id="editHarga" name="harga" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="editStatus">Status</label>
+                    <select id="editStatus" name="status">
+                        <option value="Tersedia">Tersedia</option>
+                        <option value="Habis">Habis</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary btn-full">Simpan Perubahan</button>
+            </form>
+        </div>
+    </div>
     <script src="script.js"></script>
+
 </body>
+
 </html>
