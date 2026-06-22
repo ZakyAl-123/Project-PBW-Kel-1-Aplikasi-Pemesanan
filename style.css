@@ -321,7 +321,7 @@ body {
     margin-bottom: 25px;
     height: 70px;
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    /*-webkit-line-clamp: 3;*/
     -webkit-box-orient: vertical;
     overflow: hidden;
 }

@@ -1,29 +1,24 @@
-// Memanggil library mysql2
 const mysql = require('mysql2');
 
-// Membuat konfigurasi pool koneksi
+// Membuat sambungan ke database MySQL
 const pool = mysql.createPool({
-    host: 'localhost',      // Host database Anda
-    user: 'root',           // Username database (default XAMPP/Laragon)
-    password: '',           // Password database (kosongkan jika default)
-    database: 'db_kel1',// Nama database Anda
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
+    host: 'localhost',
+    user: 'root',         // Default user XAMPP
+    password: '',         // Default password XAMPP (kosong)
+    database: 'db_kel1'
 });
 
-// Menggunakan promise agar kode lebih bersih (bisa pakai async/await)
+// Ubah ke mode Promise agar mudah dipakai
 const db = pool.promise();
 
-// Mengetes koneksi saat file dijalankan
+// Cek koneksi di terminal saat server dinyalakan
 pool.getConnection((err, connection) => {
     if (err) {
-        console.error('Koneksi ke database gagal:', err.message);
+        console.error('KONEKSI DATABASE GAGAL! Pastikan XAMPP MySQL menyala.', err.message);
     } else {
-        console.log('Koneksi ke database MySQL berhasil!');
+        console.log('KONEKSI DATABASE BERHASIL TERSAMBUNG!');
         connection.release();
     }
 });
 
-// Mengekspor koneksi agar bisa dipakai di file lain
 module.exports = db;
