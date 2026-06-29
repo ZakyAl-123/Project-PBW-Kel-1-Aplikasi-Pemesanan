@@ -99,6 +99,91 @@ app.put('/api/menu/:id', upload.single('foto'), async (req, res) => {
     }
 });
 
+// === RUTE API: MENYIMPAN PESANAN DARI PELANGGAN ===
+app.post('/api/pesanan', async (req, res) => {
+    const { no_meja, total_item, total_harga, keranjang } = req.body;
+
+    try {
+        // 1. Simpan ke tabel tb_pesanan (Nota utama)
+        const [result] = await db.execute(
+            "INSERT INTO tb_pesanan (no_meja, total_item, total_harga, status) VALUES (?, ?, ?, 'Dimasak')",
+            [no_meja, total_item, total_harga]
+        );
+        const id_pesanan = result.insertId;
+
+        // 2. Simpan detail menu ke tb_detail_pesanan
+        for (const id_menu in keranjang) {
+            const item = keranjang[id_menu];
+            const subtotal = item.harga * item.qty;
+            await db.execute(
+                "INSERT INTO tb_detail_pesanan (id_pesanan, id_menu, qty, subtotal) VALUES (?, ?, ?, ?)",
+                [id_pesanan, id_menu, item.qty, subtotal]
+            );
+        }
+        res.json({ sukses: true, pesan: "Pesanan berhasil dikirim ke Dapur!" });
+    } catch (error) {
+        console.error("Error simpan pesanan:", error);
+        res.status(500).json({ sukses: false, pesan: "Gagal memproses pesanan." });
+    }
+});
+
+// === RUTE API: AMBIL DATA TRANSAKSI UNTUK OWNER ===
+app.get('/api/pesanan', async (req, res) => {
+    try {
+        // Ambil data pesanan dan urutkan dari yang paling baru
+        const [rows] = await db.execute("SELECT * FROM tb_pesanan ORDER BY waktu DESC");
+        res.json(rows);
+    } catch (error) {
+        res.status(500).json({ pesan: "Error mengambil data transaksi." });
+    }
+});
+
+// === RUTE API: AMBIL DETAIL PESANAN ===
+app.get('/api/pesanan/:id', async (req, res) => {
+    const idPesanan = req.params.id;
+    try {
+        // Menggabungkan tabel detail pesanan dengan tabel menu untuk mendapatkan nama menu
+        const [rows] = await db.execute(`
+            SELECT dp.qty, dp.subtotal, m.nama_menu, m.harga 
+            FROM tb_detail_pesanan dp 
+            JOIN tb_menu m ON dp.id_menu = m.id_menu 
+            WHERE dp.id_pesanan = ?
+        `, [idPesanan]);
+        
+        res.json(rows);
+    } catch (error) {
+        console.error("Error ambil detail:", error);
+        res.status(500).json({ pesan: "Gagal mengambil detail pesanan." });
+    }
+});
+
+// === RUTE API: STATISTIK DASHBOARD ===
+app.get('/api/statistik', async (req, res) => {
+    try {
+        // 1. Hitung Total Semua Pesanan
+        const [rowsPesanan] = await db.execute("SELECT COUNT(id_pesanan) AS total_pesanan FROM tb_pesanan");
+        const totalPesanan = rowsPesanan[0].total_pesanan;
+
+        // 2. Hitung Pendapatan Khusus Hari Ini
+        const [rowsPendapatan] = await db.execute("SELECT SUM(total_harga) AS total_pendapatan FROM tb_pesanan WHERE DATE(waktu) = CURDATE()");
+        const pendapatanHariIni = rowsPendapatan[0].total_pendapatan || 0; // Jika 0/null, jadikan 0
+
+        // 3. Hitung Jumlah Menu yang Aktif (Tersedia)
+        const [rowsMenu] = await db.execute("SELECT COUNT(id_menu) AS menu_aktif FROM tb_menu WHERE status = 'Tersedia'");
+        const menuAktif = rowsMenu[0].menu_aktif;
+
+        // Kirim sebagai JSON
+        res.json({
+            totalPesanan: totalPesanan,
+            pendapatanHariIni: pendapatanHariIni,
+            menuAktif: menuAktif
+        });
+    } catch (error) {
+        console.error("Error ambil statistik:", error);
+        res.status(500).json({ pesan: "Gagal mengambil statistik." });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Server aktif di http://localhost:${PORT}`);
 });

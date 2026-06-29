@@ -209,4 +209,116 @@ document.addEventListener("DOMContentLoaded", () => {
             loadDataMenu();
         }
     });
+
+    // ========================================================
+    // FITUR: TARIK DATA TRANSAKSI
+    // ========================================================
+    const tabelTransaksiBody = document.getElementById('tabelTransaksiBody');
+
+    async function loadDataTransaksi() {
+        if (!tabelTransaksiBody) return;
+
+        try {
+            const response = await fetch('/api/pesanan');
+            const dataTransaksi = await response.json();
+
+            tabelTransaksiBody.innerHTML = '';
+
+            dataTransaksi.forEach(trx => {
+                const badgeClass = trx.status === 'Selesai' ? 'badge success' : 'badge warning';
+                // Potong format waktu agar rapi
+                const waktu = new Date(trx.waktu).toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
+
+                // ... (kode sebelumnya)
+                const html = `
+                    <tr>
+                        <td>#TRX-00${trx.id_pesanan}</td>
+                        <td>Meja ${trx.no_meja}</td>
+                        <td>${trx.total_item} Item</td>
+                        <td>${formatRupiah(trx.total_harga)}</td>
+                        <td>${waktu} WIB</td>
+                        <td><span class="${badgeClass}">${trx.status}</span></td>
+                        <td><button type="button" class="btn-small" onclick="lihatDetailPesanan(${trx.id_pesanan})">Lihat Detail</button></td>
+                    </tr>
+                `;
+                tabelTransaksiBody.innerHTML += html;
+// ... (kode setelahnya)
+            });
+        } catch (error) {
+            console.error("Gagal muat transaksi:", error);
+        }
+    }
+
+    // Panggil fungsinya
+    loadDataTransaksi();
+
+    // ========================================================
+    // FITUR: LIHAT DETAIL PESANAN
+    // ========================================================
+    const modalDetailPesanan = document.getElementById('modalDetailPesanan');
+    const tabelDetailBody = document.getElementById('tabelDetailBody');
+    const detailIdPesanan = document.getElementById('detailIdPesanan');
+
+    // Tutup modal
+    document.querySelector('.close-modal-detail').addEventListener('click', () => {
+        modalDetailPesanan.classList.remove('show');
+    });
+
+    window.lihatDetailPesanan = async (idPesanan) => {
+        try {
+            // Tampilkan nomor TRX dan buka modal
+            detailIdPesanan.innerText = '00' + idPesanan;
+            tabelDetailBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Memuat detail...</td></tr>';
+            modalDetailPesanan.classList.add('show');
+
+            // Ambil data dari API
+            const response = await fetch(`/api/pesanan/${idPesanan}`);
+            const dataDetail = await response.json();
+
+            tabelDetailBody.innerHTML = ''; // Kosongkan loading
+
+            if (dataDetail.length === 0) {
+                tabelDetailBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Detail tidak ditemukan.</td></tr>';
+                return;
+            }
+
+            // Looping data detail menu
+            dataDetail.forEach(item => {
+                tabelDetailBody.innerHTML += `
+                    <tr>
+                        <td>${item.nama_menu}</td>
+                        <td>${formatRupiah(item.harga)}</td>
+                        <td>${item.qty}x</td>
+                        <td><strong>${formatRupiah(item.subtotal)}</strong></td>
+                    </tr>
+                `;
+            });
+
+        } catch (error) {
+            console.error("Gagal muat detail:", error);
+            tabelDetailBody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:red;">Gagal memuat detail dari server.</td></tr>';
+        }
+    };
+
+    // ========================================================
+    // FITUR: MUAT STATISTIK DASHBOARD
+    // ========================================================
+    async function loadStatistik() {
+        try {
+            const response = await fetch('/api/statistik');
+            const data = await response.json();
+
+            // Masukkan data dari database ke elemen HTML
+            document.getElementById('statTotalPesanan').innerText = data.totalPesanan;
+            document.getElementById('statMenuAktif').innerText = data.menuAktif;
+            
+            // Format pendapatan hari ini menjadi Rupiah
+            document.getElementById('statPendapatan').innerText = formatRupiah(data.pendapatanHariIni);
+        } catch (error) {
+            console.error("Gagal memuat statistik:", error);
+        }
+    }
+
+    // Panggil fungsi secara otomatis saat portal Owner dibuka
+    loadStatistik();
 });

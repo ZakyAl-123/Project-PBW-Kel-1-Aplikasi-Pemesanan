@@ -56,21 +56,21 @@
                             <div class="stat-icon"><i class="fa-solid fa-receipt"></i></div>
                             <div class="stat-info">
                                 <h3>Total Pesanan</h3>
-                                <p>128</p>
+                                <p id="statTotalPesanan">0</p>
                             </div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-icon"><i class="fa-solid fa-rupiah-sign"></i></div>
                             <div class="stat-info">
                                 <h3>Pendapatan Hari Ini</h3>
-                                <p>Rp 4.550.000</p>
+                                <p id="statPendapatan">Rp 0</p>
                             </div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-icon"><i class="fa-solid fa-bowl-food"></i></div>
                             <div class="stat-info">
                                 <h3>Menu Aktif</h3>
-                                <p>24</p>
+                                <p id="statMenuAktif">0</p>
                             </div>
                         </div>
                     </div>
@@ -119,26 +119,7 @@
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>#TRX-0092</td>
-                                    <td>Meja 08</td>
-                                    <td>3 Item</td>
-                                    <td>Rp 105.000</td>
-                                    <td>11:30 WIB</td>
-                                    <td><span class="badge success">Selesai</span></td>
-                                    <td><button type="button" class="btn-small">Lihat Detail</button></td>
-                                </tr>
-                                <tr>
-                                    <td>#TRX-0093</td>
-                                    <td>Meja 12</td>
-                                    <td>1 Item</td>
-                                    <td>Rp 42.000</td>
-                                    <td>11:45 WIB</td>
-                                    <td><span class="badge warning">Dimasak</span></td>
-                                    <td><button type="button" class="btn-small">Lihat Detail</button></td>
-                                </tr>
-                            </tbody>
+                            <tbody id="tabelTransaksiBody"></tbody>
                         </table>
                     </div>
                 </section>
@@ -285,6 +266,28 @@
             </form>
         </div>
     </div>
+
+    <div id="modalDetailPesanan" class="modal">
+        <div class="modal-content">
+            <span class="close-modal-detail" style="float:right; font-size:1.5rem; cursor:pointer;">&times;</span>
+            <h2>Detail Pesanan #TRX-<span id="detailIdPesanan"></span></h2>
+            <div class="table-container" style="margin-top: 15px;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Nama Menu</th>
+                            <th>Harga Satuan</th>
+                            <th>Jumlah (Qty)</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelDetailBody">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 
 </body>
