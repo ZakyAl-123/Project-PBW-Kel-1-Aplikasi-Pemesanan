@@ -59,13 +59,25 @@
                                 <p id="statTotalPesanan">0</p>
                             </div>
                         </div>
+
+                        <!-- Kartu 1: Pendapatan Hari Ini (Reset Tiap Hari) -->
                         <div class="stat-card">
                             <div class="stat-icon"><i class="fa-solid fa-rupiah-sign"></i></div>
                             <div class="stat-info">
                                 <h3>Pendapatan Hari Ini</h3>
-                                <p id="statPendapatan">Rp 0</p>
+                                <p id="statPendapatanHariIni">Rp 0</p>
                             </div>
                         </div>
+
+                        <!-- Kartu 2 (BARU): Total Semua Pendapatan -->
+                        <div class="stat-card" style="border-left: 4px solid #27ae60;">
+                            <div class="stat-icon" style="color: #27ae60;"><i class="fa-solid fa-wallet"></i></div>
+                            <div class="stat-info">
+                                <h3>Total Pendapatan</h3>
+                                <p id="statTotalPendapatan">Rp 0</p>
+                            </div>
+                        </div>
+
                         <div class="stat-card">
                             <div class="stat-icon"><i class="fa-solid fa-bowl-food"></i></div>
                             <div class="stat-info">
@@ -125,52 +137,72 @@
                 </section>
 
                 <!-- TAB 4: DATA KARYAWAN -->
+                <!-- ========================================================
+         4. TAB MANAJEMEN KARYAWAN 
+         ======================================================== -->
                 <section id="tab-karyawan" class="tab-content">
-                    <div class="content-header">
-                        <h2>Manajemen Karyawan</h2>
-                        <button type="button" class="btn-primary"><i class="fa-solid fa-user-plus"></i> Tambah
-                            Karyawan</button>
+                    <div class="section-header">
+                        <h2>Daftar Karyawan</h2>
+                        <button class="btn-primary" onclick="bukaModalKaryawan()">
+                            <i class="fa-solid fa-user-plus"></i> Tambah Karyawan
+                        </button>
                     </div>
+
+                    <!-- Tabel Daftar Karyawan -->
                     <div class="table-container">
                         <table class="data-table">
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Nama Lengkap</th>
-                                    <th>Posisi</th>
-                                    <th>No. HP</th>
+                                    <th>Nama Karyawan</th>
+                                    <th>Posisi / Tugas</th>
+                                    <th>No. WhatsApp</th>
+                                    <th>Status</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>K-01</td>
-                                    <td>Budi Santoso</td>
-                                    <td>Manager</td>
-                                    <td>089876543210</td>
-                                    <td>
-                                        <button type="button" class="btn-icon edit" aria-label="Edit Data"><i
-                                                class="fa-solid fa-pen-to-square"></i></button>
-                                        <button type="button" class="btn-icon delete" aria-label="Hapus Data"><i
-                                                class="fa-solid fa-trash"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>K-02</td>
-                                    <td>Siti Aminah</td>
-                                    <td>Kasir</td>
-                                    <td>081234567891</td>
-                                    <td>
-                                        <button type="button" class="btn-icon edit" aria-label="Edit Data"><i
-                                                class="fa-solid fa-pen-to-square"></i></button>
-                                        <button type="button" class="btn-icon delete" aria-label="Hapus Data"><i
-                                                class="fa-solid fa-trash"></i></button>
-                                    </td>
-                                </tr>
+                            <tbody id="tabelKaryawanBody">
+                                <!-- Data dari database akan dimuat otomatis ke sini -->
                             </tbody>
                         </table>
                     </div>
                 </section>
+
+                <!-- ========================================================
+         MODAL POP-UP TAMBAH KARYAWAN BARU
+         ======================================================== -->
+                <div id="modalTambahKaryawan" class="modal">
+                    <div class="modal-content modal-karyawan-box">
+                        <span class="close-modal-karyawan">&times;</span>
+                        <h2>Tambah Karyawan Baru</h2>
+
+                        <form id="formTambahKaryawan">
+                            <div class="form-group">
+                                <label for="inputNamaKaryawan">Nama Lengkap</label>
+                                <input type="text" id="inputNamaKaryawan" placeholder="Contoh: Budi Santoso" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="inputPosisi">Posisi / Tugas</label>
+                                <select id="inputPosisi" required>
+                                    <option value="">-- Pilih Posisi --</option>
+                                    <option value="Dapur">Dapur (Koki / Barista)</option>
+                                    <option value="Kasir">Kasir</option>
+                                    <option value="Pelayan">Pelayan / Waiter</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="inputNoHp">Nomor WhatsApp / HP</label>
+                                <input type="number" id="inputNoHp" placeholder="08xxxxxxxxxx" required>
+                            </div>
+
+                            <button type="submit" class="btn-submit-karyawan">
+                                <i class="fa-solid fa-floppy-disk"></i> Simpan Data
+                            </button>
+                        </form>
+                    </div>
+                </div>
 
                 <!-- TAB 5: PROFIL OWNER -->
                 <section id="tab-profil" class="tab-content">
@@ -282,7 +314,7 @@
                         </tr>
                     </thead>
                     <tbody id="tabelDetailBody">
-                        </tbody>
+                    </tbody>
                 </table>
             </div>
         </div>

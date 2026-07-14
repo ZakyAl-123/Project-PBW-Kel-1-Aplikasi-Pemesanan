@@ -56,7 +56,7 @@ app.post('/api/menu', upload.single('foto'), async (req, res) => {
     const { nama_menu, harga, status } = req.body;
     const fotoPath = req.file ? '/img/' + req.file.filename : '/img/default.jpg';
     try {
-        await db.execute('INSERT INTO tb_menu (nama_menu, harga, status, foto) VALUES (?, ?, ?, ?)', 
+        await db.execute('INSERT INTO tb_menu (nama_menu, harga, status, foto) VALUES (?, ?, ?, ?)',
             [nama_menu, harga, status, fotoPath]);
         res.json({ sukses: true, pesan: "Menu berhasil ditambah!" });
     } catch (error) {
@@ -81,16 +81,16 @@ app.delete('/api/menu/:id', async (req, res) => {
 app.put('/api/menu/:id', upload.single('foto'), async (req, res) => {
     const idMenu = req.params.id;
     const { nama_menu, harga, status } = req.body;
-    
+
     try {
         if (req.file) {
             // Jika user upload foto baru
             const fotoPath = '/img/' + req.file.filename;
-            await db.execute('UPDATE tb_menu SET nama_menu=?, harga=?, status=?, foto=? WHERE id_menu=?', 
+            await db.execute('UPDATE tb_menu SET nama_menu=?, harga=?, status=?, foto=? WHERE id_menu=?',
                 [nama_menu, harga, status, fotoPath, idMenu]);
         } else {
             // Jika tidak ganti foto
-            await db.execute('UPDATE tb_menu SET nama_menu=?, harga=?, status=? WHERE id_menu=?', 
+            await db.execute('UPDATE tb_menu SET nama_menu=?, harga=?, status=? WHERE id_menu=?',
                 [nama_menu, harga, status, idMenu]);
         }
         res.json({ sukses: true, pesan: "Menu berhasil diperbarui!" });
@@ -149,7 +149,7 @@ app.get('/api/pesanan/:id', async (req, res) => {
             JOIN tb_menu m ON dp.id_menu = m.id_menu 
             WHERE dp.id_pesanan = ?
         `, [idPesanan]);
-        
+
         res.json(rows);
     } catch (error) {
         console.error("Error ambil detail:", error);
@@ -162,25 +162,84 @@ app.get('/api/statistik', async (req, res) => {
     try {
         // 1. Hitung Total Semua Pesanan
         const [rowsPesanan] = await db.execute("SELECT COUNT(id_pesanan) AS total_pesanan FROM tb_pesanan");
-        const totalPesanan = rowsPesanan[0].total_pesanan;
 
-        // 2. Hitung Pendapatan Khusus Hari Ini
-        const [rowsPendapatan] = await db.execute("SELECT SUM(total_harga) AS total_pendapatan FROM tb_pesanan WHERE DATE(waktu) = CURDATE()");
-        const pendapatanHariIni = rowsPendapatan[0].total_pendapatan || 0; // Jika 0/null, jadikan 0
+        // 2. Pendapatan Khusus Hari Ini (Reset Tiap Jam 00:00)
+        const [rowsHariIni] = await db.execute("SELECT SUM(total_harga) AS pendapatan_hari_ini FROM tb_pesanan WHERE DATE(waktu) = CURDATE()");
 
-        // 3. Hitung Jumlah Menu yang Aktif (Tersedia)
+        // 3. Total Semua Pendapatan dari Awal (Tidak Pernah Reset)
+        const [rowsTotal] = await db.execute("SELECT SUM(total_harga) AS total_semua FROM tb_pesanan");
+
+        // 4. Hitung Menu Aktif
         const [rowsMenu] = await db.execute("SELECT COUNT(id_menu) AS menu_aktif FROM tb_menu WHERE status = 'Tersedia'");
-        const menuAktif = rowsMenu[0].menu_aktif;
 
-        // Kirim sebagai JSON
         res.json({
-            totalPesanan: totalPesanan,
-            pendapatanHariIni: pendapatanHariIni,
-            menuAktif: menuAktif
+            totalPesanan: rowsPesanan[0].total_pesanan || 0,
+            pendapatanHariIni: rowsHariIni[0].pendapatan_hari_ini || 0,
+            totalSemuaPendapatan: rowsTotal[0].total_semua || 0,
+            menuAktif: rowsMenu[0].menu_aktif || 0
         });
     } catch (error) {
         console.error("Error ambil statistik:", error);
         res.status(500).json({ pesan: "Gagal mengambil statistik." });
+    }
+});
+
+// === RUTE API: UBAH STATUS PESANAN ===
+app.put('/api/pesanan/:id/status', async (req, res) => {
+    const idPesanan = req.params.id;
+    const { status } = req.body; // Menerima status baru (misal: 'Selesai')
+
+    try {
+        await db.execute(
+            "UPDATE tb_pesanan SET status = ? WHERE id_pesanan = ?",
+            [status, idPesanan]
+        );
+        res.json({ sukses: true, pesan: `Status pesanan #TRX-00${idPesanan} berhasil diubah menjadi ${status}!` });
+    } catch (error) {
+        console.error("Error ubah status:", error);
+        res.status(500).json({ sukses: false, pesan: "Gagal mengubah status pesanan." });
+    }
+});
+
+// ========================================================
+// RUTE API: MANAJEMEN KARYAWAN
+// ========================================================
+
+// 1. Ambil semua data karyawan
+app.get('/api/karyawan', async (req, res) => {
+    try {
+        const [rows] = await db.execute("SELECT * FROM tb_karyawan ORDER BY id_karyawan DESC");
+        res.json(rows);
+    } catch (error) {
+        console.error("Error ambil karyawan:", error);
+        res.status(500).json({ pesan: "Gagal mengambil data karyawan." });
+    }
+});
+
+// 2. Tambah karyawan baru
+app.post('/api/karyawan', async (req, res) => {
+    const { nama_karyawan, posisi, no_hp } = req.body;
+    try {
+        await db.execute(
+            "INSERT INTO tb_karyawan (nama_karyawan, posisi, no_hp, status) VALUES (?, ?, ?, 'Aktif')",
+            [nama_karyawan, posisi, no_hp]
+        );
+        res.json({ sukses: true, pesan: "Karyawan baru berhasil ditambahkan!" });
+    } catch (error) {
+        console.error("Error tambah karyawan:", error);
+        res.status(500).json({ sukses: false, pesan: "Gagal menambah data karyawan." });
+    }
+});
+
+// 3. Hapus karyawan
+app.delete('/api/karyawan/:id', async (req, res) => {
+    const id = req.params.id;
+    try {
+        await db.execute("DELETE FROM tb_karyawan WHERE id_karyawan = ?", [id]);
+        res.json({ sukses: true, pesan: "Data karyawan berhasil dihapus!" });
+    } catch (error) {
+        console.error("Error hapus karyawan:", error);
+        res.status(500).json({ sukses: false, pesan: "Gagal menghapus karyawan." });
     }
 });
 
